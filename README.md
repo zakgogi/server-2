@@ -1,3 +1,16 @@
+## Installation
+
+* Clone or download the repo.
+* Open terminal and navigate to the project folder.
+* Run pipenv shell to enter virtual environment (or virtual environment of your choice)
+* Run pipenv install to install dependencies
+
+### Usage
+
+* Run docker-compose up on another terminal
+* Run in the pipenv shell terminal pipenv run dev to launch
+* Go to localhost:8000 to view the server app
+
 ## Endpoint routes USER
 
 | Route          |  Description                                             |

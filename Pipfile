@@ -13,3 +13,6 @@ psycopg2 ="*"
 
 [requires]
 python_version = "3.7"
+
+[scripts]
+dev = "bash -c 'python invitation_game/manage.py runserver'"
