@@ -6,8 +6,13 @@ name = "pypi"
 [packages]
 django = "*"
 djangorestframework = "*"
+dj-database-url = "*"
+psycopg2 ="*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3.7"
+
+[scripts]
+dev = "bash -c 'python invitation_game/manage.py runserver'"
