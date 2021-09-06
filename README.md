@@ -30,4 +30,4 @@
 | /json/:game_id | not aplicable | Return game configuration for specific id | GET |
 | /json/:game_id/scores | name of gamer and score of gamer |  update the scores of a game with a new one  | PATCH   |
 | /json/:game_id/scores | not aplicable | Return updated scores (not whole object) | GET |
-| /json/:wedding_url | not aplicable | Return two games ids with the character names |  
+| /json/:wedding_url | not aplicable | Return two games ids with the character names |  GET |
