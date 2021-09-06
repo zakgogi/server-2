@@ -2,5 +2,8 @@
 {% block content %}
     <h1>Welcome to the blog</h1>
     <p>{{name}}</p>
+    {% if games %}
+        {% if games[0].host_id == user %}
+            show link
 
 {% endblock content %}
