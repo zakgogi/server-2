@@ -8,6 +8,9 @@ django = "*"
 djangorestframework = "*"
 dj-database-url = "*"
 psycopg2 ="*"
+gunicorn = "*"
+django-heroku = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
