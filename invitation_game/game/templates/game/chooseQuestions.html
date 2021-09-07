@@ -1,0 +1,59 @@
+{% extends "game/base.html"%}
+{% block content %}
+    <form method='post'>
+    {% csrf_token %}
+    {% autoescape off %}
+    {% if questions  %}
+        {% for row in questions %}
+            {% with y=forloop.counter0|stringformat:"s" %}
+            {% with correct="correct-answer-"|add:y%}
+            {% with incorrect="incorrect-answer-"|add:y%}
+            {% with question="question-"|add:y%}
+                <input type='text' name={{question}} hidden/>
+                <script>
+                    document.querySelector("[name={{question}}]").value="{{row.question|stringformat:"s"}}"
+                </script>
+                <label for={{correct}}>{{row.question|stringformat:"s"}}</label>
+                <select name={{correct}} id={{correct}}>
+                    {% for m in row.options %}
+                        <option>{{m}}</option>
+                    {% endfor %}
+                </select>
+                <select name={{incorrect}} id={{incorrect}} multiple="multiple" hidden>
+                    {% for m in row.options %}
+                        <option>{{m}}</option>
+                    {% endfor %}
+                </select>
+            {% endwith %}
+            {% endwith %}
+            {% endwith %}
+            {% endwith %}
+        {% endfor %}
+        <button type='submit' id='questionmaker'>Submit</button>
+    {% endif %}
+    {% endautoescape %}
+    </form>
+
+    <script>
+    dothething();
+    function mirror(number){   
+        selected = document.getElementById('correct-answer-'+number)
+        incorrect =  document.getElementById('incorrect-answer-'+number)
+        for(let j=0; j<4;j++){
+            incorrect.children[j].selected = !selected.children[j].selected
+        }
+    }
+    function dothething(){
+        for(let i=0;i<{{questions|length}};i++){            
+            mirror(i)
+        }
+    }
+    function validateSubmission(e) {
+        e.preventDefault()
+        dothething()
+        e.submit()
+    }
+    </script>
+{% endblock content %}
+
+

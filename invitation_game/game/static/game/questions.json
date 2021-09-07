@@ -1,0 +1,29 @@
+{
+    "questions":[
+        {
+            "question":"If user meets a genie, what would be monica's wish?",
+            "options":[
+                "A billion pounds",
+                "Beautiful wife/husband",
+                "To be the king of the world",
+                "To have superpowers"
+            ]
+        },{
+            "question":"What does {{user}} drink the most?",
+            "options":[
+                "Tea",
+                "Beer",
+                "Coffee",
+                "Wine"
+            ]
+        },{
+            "question":"Which animal does {{user}} dream to pet?",
+            "options":[
+                "A dog",
+                "A cat",
+                "A horse",
+                "A duck"
+            ]
+        }
+    ]
+}

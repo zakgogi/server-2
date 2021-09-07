@@ -1,0 +1,44 @@
+{% extends "game/base.html"%}
+{% block content %}
+    <form method='post'>
+        {% if side1 %}
+            {% comment %} // show game character {% endcomment %}
+            <a href="{% url 'game-form' game=1 %}">Create the configuration number 1 </a>
+        {% else%}
+            <a href="{% url 'game-form' game=1 %}">Create the configuration number 1 </a>
+        {% endif %}
+
+        {% if side2 %}
+            {% comment %} // show game character {% endcomment %}
+            <a href="{% url 'game-form' game=2 %}">Update the configuration number 1 </a>
+        {% else%}
+            <a href="{% url 'game-form' game=2 %}">Create the configuration number 1 </a>
+        {% endif %}
+
+        {% if invitation %}
+            <h4>{{invitation.title|truncatechars:20}}</h4>
+            <p>{{invitation.message|truncatechars:50}}
+            <a href="{% url 'invitation-form' %}">Update the formal invitation</a>
+        {% else%}
+            <a href="{% url 'invitation-form' %}">Create the formal invitation</a>
+        {% endif %}
+
+        {% if side1 and side2 and invitation %}
+            <input type='text' name='wedding_url'>
+            <button type='submit' id='questionmaker'> Obtain my link </button>
+        {% endif %}
+    </form>
+    <script>
+        form = document.querySelector('form')
+        form.addEventListener('submit',validateSubmission)
+
+        function validateSubmission(e){
+            e.preventDefault()
+        }
+
+    </script>
+
+
+
+
+{% endblock content %}

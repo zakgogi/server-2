@@ -1,0 +1,43 @@
+{
+    "hair":[
+        {
+            "id":1,
+            "title":"Short ginger"
+        },
+        {
+            "id":2,
+            "title":"Short brunete"
+        }
+    ],
+    "dress":[
+        {
+            "id":1,
+            "title":"Short ginger"
+        },
+        {
+            "id":2,
+            "title":"Short brunete"
+        }
+    ],
+    "eyes":[
+        {
+            "id":1,
+            "title":"Short ginger"
+        },
+        {
+            "id":2,
+            "title":"Short brunete"
+        }
+    ],
+    "skin":[
+        {
+            "id":1,
+            "title":"Short ginger"
+        },
+        {
+            "id":2,
+            "title":"Short brunete"
+        }
+    ]
+    
+}
