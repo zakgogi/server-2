@@ -2,11 +2,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.http import  JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 
 from pathlib import Path
 import json
 
-from .serializers import GameSerializer, GameScoresSerializer, QuestionSerializer,  UserSerializer
+from .serializers import GameSerializer, GameScoresSerializer, InvitationSerializer, IDGameSerializer, QuestionSerializer,  UserSerializer
 from .models import Question, Character, Score, Invitation, Game, Profile
 from .forms import NewGameForm
 
@@ -61,14 +62,34 @@ def update_questions(request, game = 0):
 @login_required
 def home(request):
     if request.method == 'POST':
-        game = NewGameForm(request.POST)
-        if game.is_valid():
-            game_id = game.save().id
-            return redirect("game-show", id=game_id)
+        if user_side1 and user_side2 and user_invitation and request.POST['wedding_url']:
+            data = {
+                        'side1': IDGameSerializer(user_side1),
+                        'side2': IDGameSerializer(user_side2),
+                        'invitation': InvitationSerializer(user_invitation),
+                        'wedding_url': request.POST['wedding_url']
+                    }
+
+            user = User.objects.get(username=request.user.username)
+            if user.profile.id:
+                profile = Profile.objects.get(pk=user.profile.id)
+                print(user.profile)
+                id = UserSerializer(profile, data=data)
+            else:
+                profile = UserSerializer(data=data)
+                user.profile = Profile.objects.get(pk=profile.id)
+        else:
+            data = {
+                        'side1': IDGameSerializer(user_side1),
+                        'side2': IDGameSerializer(user_side2),
+                        'invitation': InvitationSerializer(user_invitation),
+                        'wedding_url': request.POST['wedding_url']
+                    }
+            return render(request, "game/newProfile.html", data=data)
     else:
         form = NewGameForm()
     data = {'form': form, 'questions':''}
-    return render(request, 'game/new.html', data)
+    return render(request, 'game/newProfile.html', data)
         
 
 @login_required
