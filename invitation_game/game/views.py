@@ -3,21 +3,63 @@ from django.shortcuts import render, redirect, get_object_or_404, get_list_or_40
 from django.http import  JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from pathlib import Path
 import json
 
-from .serializers import GameSerializer, GameScoresSerializer,  UserSerializer
+from .serializers import GameSerializer, GameScoresSerializer, QuestionSerializer,  UserSerializer
 from .models import Question, Character, Score, Invitation, Game, Profile
 from .forms import NewGameForm
 
+script_location = Path(__file__).absolute().parent
+file_location2 = script_location / 'static/game/questions.json'
+
+with file_location2.open() as json_file:
+    questionData = json.load(json_file)
+
 # Create your views here.
 
-def home(req, name = 'person'):
-        context = {"name": name}
-    
-        return render(req, "game/index.html", context)
+user_side1_questions = []
+user_side1 = None
+user_side2_questions = []
+user_side2 = None
+user_side2_character = None
+user_side1_character = None
+user_invitation = None
+
 
 @login_required
-def create(request):
+def update_questions(request, game = 0):
+    if request.method == 'POST':
+        user_questions=[]
+        print(request.body.decode('utf-8'))
+        form=request.POST
+        for n in range(len(questionData['questions'])):
+            incorrect_list = request.POST.getlist('incorrect-answer-'+str(n))
+            data={
+                'question':form['question-'+str(n)],
+                'correct_answer': form['correct-answer-'+str(n)],
+                'incorrect_answers': incorrect_list
+            }
+            actual = QuestionSerializer(data=data)
+            if actual.is_valid():
+                id=actual.save()
+                user_questions.append(id)
+            else:
+                print(actual.errors)
+        if(game==0):
+            global user_side1_questions
+            user_side1_questions = user_questions
+        else:
+            global user_side2_questions
+            user_side2_questions = user_questions
+        return render(request, "home", game=game)
+
+    else:
+        context = {"questions": questionData['questions']}
+        return render(request, "game/chooseQuestions.html", context)
+
+@login_required
+def home(request):
     if request.method == 'POST':
         game = NewGameForm(request.POST)
         if game.is_valid():
@@ -44,6 +86,17 @@ def show(request, id):
         'form': form
     }
     return render(request, 'articles/management/show.html', data)
+
+def game(request, game):
+
+    return render(request, 'game/new.html')
+def invitation(request, game):
+
+    return render(request, 'game/new.html')
+    
+def update_character(request, game):
+
+    return render(request, 'game/new.html')
 
 def not_found_404(request, exception):
     data = { 'err': exception }

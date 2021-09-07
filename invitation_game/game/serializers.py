@@ -76,3 +76,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ('wedding_url', 'side1', 'side2', 'invitation')
+
+
+        
