@@ -1,9 +1,10 @@
 {% extends "game/base.html"%}
 {% block content %}
     <form method='post'>
+        {% csrf_token %}
         {% if side1 %}
             {% comment %} // show game character {% endcomment %}
-            <a href="{% url 'game-form' game=1 %}">Create the configuration number 1 </a>
+            <a href="{% url 'game-form' game=1 %}">Update the configuration number 1 </a>
         {% else%}
             <a href="{% url 'game-form' game=1 %}">Create the configuration number 1 </a>
         {% endif %}
@@ -23,12 +24,14 @@
             <a href="{% url 'invitation-form' %}">Create the formal invitation</a>
         {% endif %}
 
-        {% if side1 and side2 and invitation %}
+        {{form}}
+        {% comment %} {% if side1 and side2 and invitation %}
             <input type='text' name='wedding_url'>
             <button type='submit' id='questionmaker'> Obtain my link </button>
-        {% endif %}
+        {% endif %} {% endcomment %}
+         <button type='submit' id='profilemaker'> Obtain my link </button>
     </form>
-    <script>
+    {% comment %} <script>
         form = document.querySelector('form')
         form.addEventListener('submit',validateSubmission)
 
@@ -36,7 +39,7 @@
             e.preventDefault()
         }
 
-    </script>
+    </script> {% endcomment %}
 
 
 
