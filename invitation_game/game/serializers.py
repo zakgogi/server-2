@@ -39,7 +39,7 @@ class ScoreSerializer(serializers.ModelSerializer):
         fields = ('id','name', 'score')
 
 class GameSerializer(serializers.ModelSerializer):
-    questions = QuestionSerializer(many=True)
+    questions = QuestionSaverSerializer(many=True)
     character = CharacterSerializer(read_only=True)
     scores = ScoreSerializer(many=True)
 

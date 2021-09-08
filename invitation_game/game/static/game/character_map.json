@@ -1,6 +1,6 @@
 {
     "bodytype_1":{
-        "hair":[
+        "H":[
             {
                 "id":1,
                 "title":"Short blonde"
@@ -14,7 +14,7 @@
                 "title":"Short brunete"
             }
         ],
-        "skin":[
+        "S":[
             {
                 "id":1,
                 "title":"Light tone"
@@ -28,7 +28,7 @@
                 "title":"Olive tone"
             }
         ],
-        "dress":[
+        "E":[
             {
                 "id":1,
                 "title":"Dress version 1"
@@ -54,7 +54,7 @@
                 "title":"Relaxed black suit"
             }
         ],
-        "eyes":[
+        "D":[
             {
                 "id":1,
                 "title":"Green"
@@ -70,7 +70,7 @@
         ]
     },
     "bodytype_2":{
-        "hair":[
+        "H":[
             {
                 "id":4,
                 "title":"Short cut blonde"
@@ -84,7 +84,7 @@
                 "title":"Short cut brunete"
             }
         ],
-        "skin":[
+        "S":[
             {
                 "id":4,
                 "title":"Light tone"
@@ -98,7 +98,7 @@
                 "title":"Olive tone"
             }
         ],
-        "dress":[
+        "D":[
             {
                 "id":5,
                 "title":"Relaxed white suit"
@@ -112,7 +112,7 @@
                 "title":"Dress version 3"
             }
         ],
-        "eyes":[
+        "E":[
             {
                 "id":4,
                 "title":"Upper green"

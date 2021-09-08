@@ -1,0 +1,43 @@
+{% extends "game/base.html"%}
+{% block content %} 
+{% load static %}
+    <form method='post'>
+        {% csrf_token %}
+        {{ form }}
+
+        {% for part in character.bodytype_1 %}
+            <p>{{part}}</p>
+            {% for value in character.bodytype_1.H%}
+                <p>key,value:{{value.id}}</p>
+                {% with firstpart=value.id|stringformat:"s"|add:".png" %}
+                {% with secondpart=part|add:firstpart %}
+                {% with url="game/character_sprites/"|add:secondpart%}
+                <p>p{{seconpart}}{{firstpart}}</p>
+                <img src="{% static url %}" alt={{value.title}} onClick>
+                {%endwith%}
+                {%endwith%}
+                {%endwith%}
+            {%endfor%}
+        {%endfor%}
+        <div id='body2'>
+         {% for part in character.bodytype_1 %}
+            <div id={{part}}><p>{{part}}</p>
+            {% for value in character.bodytype_1.H%}
+                <p>key,value:{{value.id}}</p>
+                {% with firstpart=value.id|stringformat:"s"|add:".png" %}
+                {% with secondpart=part|add:firstpart %}
+                {% with url="game/character_sprites/"|add:secondpart%}
+                <p>p{{seconpart}}{{firstpart}}</p>
+                <img src="{% static url %}" alt={{value.title}} onClick>
+                {%endwith%}
+                {%endwith%}
+                {%endwith%}
+            {%endfor%}
+            </div>
+        {%endfor%}
+        </div>
+        {{ form }}
+            <button type='submit' id='gamemaker'>Submit</button>
+    </form>
+
+{% endblock content %}
