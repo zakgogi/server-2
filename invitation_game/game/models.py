@@ -41,10 +41,10 @@ class Question(models.Model):
 
 class Character(models.Model):
     name = models.CharField(max_length=100)
-    hair_id = models.IntegerField(choices=character_list_tuple(characterData['hair']))
-    skin_id = models.IntegerField(choices=character_list_tuple(characterData['skin']))
-    dress_id = models.IntegerField(choices=character_list_tuple(characterData['dress']))
-    eyes_id = models.IntegerField(choices=character_list_tuple(characterData['eyes']))
+    hair_id = models.IntegerField()
+    skin_id = models.IntegerField()
+    dress_id = models.IntegerField()
+    eyes_id = models.IntegerField()
     
     class Meta:
         verbose_name_plural = "characters"
