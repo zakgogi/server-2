@@ -1,5 +1,21 @@
 {% extends "game/base.html"%}
 {% block content %} 
-    {{ form }}
+    <form method='post'>
+        {% csrf_token %}
+        {% if character %}
+            <a href="{% url 'character-form' gamenumber=gamenumber %}">Change the character</a>
+            {%if questions%}
+                <a href="{% url 'questions-form' gamenumber=gamenumber name=character_name %}">Change the answers of the questions</a>
+            {%else%}
+                <a href="{% url 'questions-form' gamenumber=gamenumber name=character_name %}">Answer the questions for {{character_name}}</a>
+            {%endif%}
+        {% else %}
+            <a href="{% url 'character-form' gamenumber=gamenumber %}">Create the character</a>
+        {% endif %}
+        {{ form }}
+        {%if questions and character%}
+            <button type='submit' id='gamemaker'>Submit</button>
+        {%endif%}
+    </form>
 
 {% endblock content %}

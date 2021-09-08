@@ -209,7 +209,34 @@ def show(request, id):
     }
     return render(request, 'articles/management/show.html', data)
 
-def game(request, game):
+def gamedatasetter(request, id, side):
+    gameInstance = Game.objects.get(pk=id) #chunk that update the form to what we know
+    if gameInstance.character: request.session["user_side"+str(side)+'_character'] = gameInstance.character.id
+    if gameInstance.questions: request.session["user_side"+str(side)+'_questions'] = ','.join(gameInstance.questions)
+    if gameInstance.id: request.session["user_side"+str(side)] = gameInstance.id
+    return gameInstance
+
+def gamedatagetter(request, side):
+    if "user_side"+str(side)+"_character" in request.session:
+        character= request.session["user_side"+str(side)+"_character"]
+        obj = Character.objects.get(pk=character)
+        character_name = obj.name
+    else:
+        character = None
+        character_name = None
+    if "user_side"+str(side)+"_questions" in request.session: questions= request.session["user_side"+str(side)+"_questions"]
+    else:  questions= None
+
+    data = {
+        'character': character,
+        'questions': questions,
+        'character_name': character_name,
+        'gamenumber':side
+    }
+    return data
+
+
+def game(request, gamenumber):
     # 1st check if there an game in the side_n  attached to the user.profile
     # generate game with that one and update with the request
     # update session game
@@ -220,8 +247,54 @@ def game(request, game):
     #   if not: 
     #       generate a totally new invitation with the request
     #       update session invitation
-
-    return render(request, 'game/new.html')
+    if request.method == 'POST':
+        if(gamenumber==1):
+            if hasattr(request.user, 'profile') and request.user.profile.side1 :
+                obj = request.user.profile.side1
+                gameInstance = get_object_or_404(Game, pk=obj.id)
+                game = NewGameForm(data=request.POST, instance=gameInstance)
+            elif "user_side1" in request.session:
+                obj = request.session["user_side1"]
+                gameInstance = get_object_or_404(Game, pk=obj)
+                game = NewGameForm(data=request.POST, instance=gameInstance)
+            else:
+                game = NewGameForm(data=request.POST)
+        else:
+            if hasattr(request.user, 'profile') and request.user.profile.side2 :
+                obj = request.user.profile.side2
+                gameInstance = get_object_or_404(Game, pk=obj.id)
+                game = NewGameForm(data=request.POST, instance=gameInstance)
+            elif "user_side2" in request.session:
+                obj = request.session["user_side2"]
+                gameInstance = get_object_or_404(Game, pk=obj)
+                game = NewGameForm(data=request.POST, instance=gameInstance)
+            else:
+                game = NewGameForm(data=request.POST)
+        if game.is_valid():
+            id = game.save()
+            gamedatasetter(request,id.id, gamenumber)
+            return redirect('home')
+        else:
+            print(game.errors)
+            initial = gamedatagetter(request, gamenumber)
+            data = {
+                'form':game,
+                **initial,
+            }
+    else:
+        if gamenumber == 1:
+            if hasattr(request.user, 'profile') and request.user.profile.side1:
+                gameInstance = gamedatasetter(request,request.user.profile.side1, gamenumber)
+        else:
+            if hasattr(request.user, 'profile') and request.user.profile.side2:
+                gameInstance = gamedatasetter(request,request.user.profile.side2, gamenumber)
+        initial=gamedatagetter(request, gamenumber)
+        form = NewGameForm(initial=initial)
+        data = {
+            'form':form,
+            **initial
+        }
+    return render(request, "game/newGame.html", data)
 
 @login_required
 def invitation(request):
@@ -236,7 +309,7 @@ def invitation(request):
     #       generate a totally new invitation with the request
     #       update session invitation
     if request.method == 'POST':
-        if hasattr(request.user, 'profile'):
+        if hasattr(request.user, 'profile') and request.user.profile.invitation :
             obj = request.user.profile.invitation
             invitationInstance = get_object_or_404(Invitation, pk=obj.id)
             invitation = NewInvitationForm(data=request.POST, instance=invitationInstance)
@@ -264,7 +337,7 @@ def invitation(request):
         }
         return render(request, 'game/newInvitation.html', data)
     
-def update_character(request, game):
+def update_character(request, gamenumber):
     # 1st check if there is a character attached to the game object_n
     # generate character with that ones and update with the request
     # update session character side_n
@@ -276,7 +349,7 @@ def update_character(request, game):
     #       generate a totally new character with the request
     #       update session character side_n
     if request.method == 'POST':
-        if(game == 1):
+        if(gamenumber == 1):
             if "user_side1" in request.session:
                 game = get_object_or_404(Game, pk=request.session["user_side1"])
                 user_character = game.character.id
