@@ -64,7 +64,8 @@ def update_questions(request, gamenumber=1, name='user'):
             if "user_side2" in request.session:
                 game = get_object_or_404(Game, pk=request.session["user_side2"])
                 user_questions = []
-                for row in game.questions:
+                questions = game.questions.all()
+                for row in questions:
                     user_questions.append(str(row.id))
             elif "user_side2_questions" in request.session:
                 user_questions = request.session["user_side2_questions"].split(',')
@@ -218,9 +219,12 @@ def show(request, id):
 def gamedatasetter(request, id, side):
     gameInstance = Game.objects.get(pk=id) #chunk that update the form to what we know
     if gameInstance.character: request.session["user_side"+str(side)+'_character'] = gameInstance.character.id
-    if gameInstance.questions.all():
+    if len(gameInstance.questions.all())>0:
+        a = ''
         for question in gameInstance.questions.all():
-            request.session["user_side"+str(side)+'_questions'] = request.session["user_side"+str(side)+'_questions']+','+str(question.id)
+            a+=','+str(question.id)
+        a=a[1:]
+        request.session["user_side"+str(side)+'_questions'] = a
     if gameInstance.id: request.session["user_side"+str(side)] = gameInstance.id
     return gameInstance
 
@@ -309,6 +313,7 @@ def game(request, gamenumber):
         else:
             print(game.errors)
             initial = gamedatagetter(request, gamenumber)
+            print(initial)
             data = {
                 'form':game,
                 **initial,
@@ -316,11 +321,12 @@ def game(request, gamenumber):
     else:
         if gamenumber == 1:
             if hasattr(request.user, 'profile') and request.user.profile.side1:
-                gameInstance = gamedatasetter(request,request.user.profile.side1.id, gamenumber)
+                gameInstance = gamedatasetter(request,int(request.user.profile.side1.id), gamenumber)
         else:
             if hasattr(request.user, 'profile') and request.user.profile.side2:
-                gameInstance = gamedatasetter(request,request.user.profile.side2.id, gamenumber)
+                gameInstance = gamedatasetter(request,int(request.user.profile.side2.id), gamenumber)
         initial=gamedatagetter(request, gamenumber)
+        print(initial)
         form = NewGameForm(initial=initial)
         data = {
             'form':form,
