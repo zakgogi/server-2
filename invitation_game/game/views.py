@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from pathlib import Path
 import json
 
-from .serializers import GameSerializer, GameScoresSerializer, InvitationSerializer, IDGameSerializer, QuestionSerializer,  UserSerializer
+from .serializers import GameSerializer, GameScoresSerializer, InvitationSerializer, IDGameSerializer, QuestionSerializer,  UserSerializer, QuestionSaverSerializer
 from .models import Question, Character, Score, Invitation, Game, Profile
 from .forms import NewGameForm
 
@@ -29,11 +29,21 @@ user_invitation = None
 
 
 @login_required
-def update_questions(request, game = 0):
+def update_questions(request, game = 1):
+    
     if request.method == 'POST':
-        user_questions=[]
-        print(request.body.decode('utf-8'))
+        if(game == 1):
+            if "user_side1_questions" in request.session:
+                user_questions = request.session["user_side1_questions"].split(',')
+            else:   
+                user_questions=[]
+        else:
+            if "user_side2_questions" in request.session:
+                user_questions = request.session["user_side2_questions"].split(',')
+            else:
+                user_questions = []
         form=request.POST
+        new_user_questions =[ ]
         for n in range(len(questionData['questions'])):
             incorrect_list = request.POST.getlist('incorrect-answer-'+str(n))
             data={
@@ -41,19 +51,24 @@ def update_questions(request, game = 0):
                 'correct_answer': form['correct-answer-'+str(n)],
                 'incorrect_answers': incorrect_list
             }
-            actual = QuestionSerializer(data=data)
+            if len(user_questions)==len(questionData['questions']):
+                object= Question.objects.get(pk=user_questions[n])
+                actual = QuestionSaverSerializer(object, data=data)
+            else:
+                actual = QuestionSerializer(data=data)
             if actual.is_valid():
                 id=actual.save()
-                user_questions.append(id)
+                new_user_questions.append(str(id.id))
             else:
                 print(actual.errors)
-        if(game==0):
-            global user_side1_questions
-            user_side1_questions = user_questions
+        if(game == 1):
+            user_questions=new_user_questions
+            request.session["user_side1_questions"] = ','.join(user_questions)
+            print(request.session["user_side1_questions"])
         else:
-            global user_side2_questions
-            user_side2_questions = user_questions
-        return render(request, "home", game=game)
+            user_questions=new_user_questions
+            request.session["user_side2_questions"] = ','.join(user_questions)
+        return redirect( "game-form", game=game)
 
     else:
         context = {"questions": questionData['questions']}
@@ -62,30 +77,22 @@ def update_questions(request, game = 0):
 @login_required
 def home(request):
     if request.method == 'POST':
-        if user_side1 and user_side2 and user_invitation and request.POST['wedding_url']:
-            data = {
-                        'side1': IDGameSerializer(user_side1),
-                        'side2': IDGameSerializer(user_side2),
-                        'invitation': InvitationSerializer(user_invitation),
-                        'wedding_url': request.POST['wedding_url']
-                    }
+        data = {
+                    'side1': IDGameSerializer(user_side1),
+                    'side2': IDGameSerializer(user_side2),
+                    'invitation': InvitationSerializer(user_invitation),
+                    'wedding_url': request.POST['wedding_url']
+                }
 
-            user = User.objects.get(username=request.user.username)
-            if user.profile.id:
-                profile = Profile.objects.get(pk=user.profile.id)
-                print(user.profile)
-                id = UserSerializer(profile, data=data)
-            else:
-                profile = UserSerializer(data=data)
-                user.profile = Profile.objects.get(pk=profile.id)
+        user = User.objects.get(username=request.user.username)
+        if user.profile.id:
+            profile = Profile.objects.get(pk=user.profile.id)
+            print(user.profile)
+            id = UserSerializer(profile, data=data)
         else:
-            data = {
-                        'side1': IDGameSerializer(user_side1),
-                        'side2': IDGameSerializer(user_side2),
-                        'invitation': InvitationSerializer(user_invitation),
-                        'wedding_url': request.POST['wedding_url']
-                    }
-            return render(request, "game/newProfile.html", data=data)
+            profile = UserSerializer(data=data)
+            user.profile = Profile.objects.get(pk=profile.id)
+        return redirect(request, "game/newProfile.html", data=data)        
     else:
         form = NewGameForm()
     data = {'form': form, 'questions':''}

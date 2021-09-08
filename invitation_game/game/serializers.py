@@ -3,6 +3,17 @@ from rest_framework import serializers
 from .models import Question, Character, Score, Invitation, Game, Profile
 from django.contrib.auth.models import User
 
+class QuestionSaverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = '__all__'
+        
+    def update(self, instance, validated_data):
+        instance.question = validated_data['question']
+        instance.incorrect_answer = validated_data['incorrect_answers']
+        instance.correct_answer = validated_data['correct_answer']
+        instance.save()
+        return instance
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
