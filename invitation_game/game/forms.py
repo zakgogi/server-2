@@ -5,7 +5,10 @@ class NewGameForm(forms.ModelForm):
     class Meta:
         model = Game
         fields = ['character', 'questions']
-        widgets = {'questions': forms.HiddenInput()}
+        widgets = {
+            'questions': forms.HiddenInput(),
+            'character': forms.HiddenInput()
+        }
 
 class NewInvitationForm(forms.ModelForm):
     class Meta:
