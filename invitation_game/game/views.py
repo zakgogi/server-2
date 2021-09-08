@@ -7,9 +7,9 @@ from django.contrib.auth.models import User
 from pathlib import Path
 import json
 
-from .serializers import GameSerializer, GameScoresSerializer, InvitationSerializer, IDGameSerializer, QuestionSerializer,  UserSerializer
+from .serializers import CharacterSerializer, GameSerializer, GameScoresSerializer, InvitationSerializer, IDGameSerializer, QuestionSerializer,  UserSerializer, QuestionSaverSerializer
 from .models import Question, Character, Score, Invitation, Game, Profile
-from .forms import NewGameForm
+from .forms import NewGameForm, NewInvitationForm, NewProfileForm
 
 script_location = Path(__file__).absolute().parent
 file_location2 = script_location / 'static/game/questions.json'
@@ -26,14 +26,45 @@ user_side2 = None
 user_side2_character = None
 user_side1_character = None
 user_invitation = None
+user_wedding_url=None
 
 
 @login_required
-def update_questions(request, game = 0):
+def update_questions(request, game = 1, name='user'):
+    # 1st check if there questioons are attached to the game object_n
+    # generate questions with that ones and update with the request
+    # update session question
+    # if not:
+    #   2nd check if there are questions attached to session
+    #   generate questions with that one and update with the request
+    #   update session questions
+    #   if not: 
+    #       generate a totally new questions with the request
+    #       update session questions
+    
     if request.method == 'POST':
-        user_questions=[]
-        print(request.body.decode('utf-8'))
+        if(game == 1):
+            if "user_side1" in request.session:
+                game = get_object_or_404(Game, pk=request.session["user_side1"])
+                user_questions = []
+                for row in game.questions:
+                    user_questions.append(str(row.id))
+            elif "user_side1_questions" in request.session:
+                user_questions = request.session["user_side1_questions"].split(',')
+            else:   
+                user_questions=[]
+        else:
+            if "user_side2" in request.session:
+                game = get_object_or_404(Game, pk=request.session["user_side2"])
+                user_questions = []
+                for row in game.questions:
+                    user_questions.append(str(row.id))
+            elif "user_side2_questions" in request.session:
+                user_questions = request.session["user_side2_questions"].split(',')
+            else:
+                user_questions = []
         form=request.POST
+        new_user_questions =[ ]
         for n in range(len(questionData['questions'])):
             incorrect_list = request.POST.getlist('incorrect-answer-'+str(n))
             data={
@@ -41,55 +72,125 @@ def update_questions(request, game = 0):
                 'correct_answer': form['correct-answer-'+str(n)],
                 'incorrect_answers': incorrect_list
             }
-            actual = QuestionSerializer(data=data)
+            if len(user_questions)==len(questionData['questions']):
+                object= Question.objects.get(pk=user_questions[n])
+                actual = QuestionSaverSerializer(object, data=data)
+            else:
+                actual = QuestionSerializer(data=data)
             if actual.is_valid():
                 id=actual.save()
-                user_questions.append(id)
+                new_user_questions.append(str(id.id))
             else:
                 print(actual.errors)
-        if(game==0):
-            global user_side1_questions
-            user_side1_questions = user_questions
+        if(game == 1):
+            user_questions=new_user_questions
+            request.session["user_side1_questions"] = ','.join(user_questions)
+            print(request.session["user_side1_questions"])
         else:
-            global user_side2_questions
-            user_side2_questions = user_questions
-        return render(request, "home", game=game)
+            user_questions=new_user_questions
+            request.session["user_side2_questions"] = ','.join(user_questions)
+        return redirect( "game-form", game=game)
 
     else:
-        context = {"questions": questionData['questions']}
+        context = {"questions": questionData['questions'], 'name':name}
         return render(request, "game/chooseQuestions.html", context)
+
+def datageter(request):
+    if "user_side1" in request.session:
+            game1= request.session["user_side1"]
+    else:
+        game1= None  
+    if "user_side2" in request.session:
+        game2=request.session["user_side2"]
+    else:
+        game2= None
+    if "user_invitation" in request.session:
+        invitation=request.session["user_invitation"]
+    else:
+        invitation= None
+    if "user_wedding_url" in request.session:
+        wedding= request.session["user_wedding_url"]
+    else:
+        wedding= None
+    data = {
+        'user': request.user,
+        'side1': game1,
+        'side2': game2,
+        'invitation': invitation,
+        'wedding_url': wedding
+    }
+    return data
+def datasetter(request, id):
+    profileInstance = Profile.objects.get(pk=id) #chunk that update the form to what we know
+    if profileInstance.side1: request.session["user_side1"] = profileInstance.side1.id
+    if profileInstance.invitation: request.session["user_invitation"] = profileInstance.invitation.id
+    if profileInstance.side2: request.session["user_side2"] = profileInstance.side2.id
+    if profileInstance.wedding_url: request.session["user_wedding_url"] = profileInstance.wedding_url
+    return profileInstance
 
 @login_required
 def home(request):
+    # 1st check if the loggded user have a profile
+    #   generate profile instance with that
+    #   update instance with request
+    #   update session information
+    #   render form with the session information
+    # if no:
+    #   2nd check if request info is valid
+    #       create an instance with the request
+    #       join it with the user
+    #       update session information
+    #       render form with the session information
+    #   if no:
+    #        render form empty
     if request.method == 'POST':
-        if user_side1 and user_side2 and user_invitation and request.POST['wedding_url']:
-            data = {
-                        'side1': IDGameSerializer(user_side1),
-                        'side2': IDGameSerializer(user_side2),
-                        'invitation': InvitationSerializer(user_invitation),
-                        'wedding_url': request.POST['wedding_url']
-                    }
-
-            user = User.objects.get(username=request.user.username)
-            if user.profile.id:
-                profile = Profile.objects.get(pk=user.profile.id)
-                print(user.profile)
-                id = UserSerializer(profile, data=data)
-            else:
-                profile = UserSerializer(data=data)
-                user.profile = Profile.objects.get(pk=profile.id)
+        if hasattr(request.user, 'profile'):            
+            profileInstance = Profile.objects.get(pk=request.user.profile.id)
+            profile=NewProfileForm(instance=profileInstance, data=request.POST)
         else:
+            profile=NewProfileForm(request.POST)
+        if profile.is_valid():
+            id =profile.save()
+            datasetter(request,id.id)
+            initial=datageter(request)
             data = {
-                        'side1': IDGameSerializer(user_side1),
-                        'side2': IDGameSerializer(user_side2),
-                        'invitation': InvitationSerializer(user_invitation),
-                        'wedding_url': request.POST['wedding_url']
-                    }
-            return render(request, "game/newProfile.html", data=data)
+                'form':profile,
+                **initial,
+            }
+        else:
+            print(profile.errors)
+            initial=datageter(request)
+            data = {
+                'form':profile,
+                **initial
+            }
     else:
-        form = NewGameForm()
-    data = {'form': form, 'questions':''}
-    return render(request, 'game/newProfile.html', data)
+        if hasattr(request.user, 'profile'):
+            profileInstance = datasetter(request,request.user.profile.id)
+        initial=datageter(request)
+        form = NewProfileForm(initial=initial)
+        data = {
+            'form':form,
+            **initial
+        }
+    return render(request, "game/newProfile.html", data)
+
+    #     user = User.objects.get(username=request.user.username)
+    #     if user.profile.id:
+    #         profile = Profile.objects.get(pk=user.profile.id)
+    #         print(user.profile)
+    #         id = UserSerializer(profile, data=data)
+    #     else:
+    #         profile = UserSerializer(data=data)
+    #         user.profile = Profile.objects.get(pk=profile.id)
+    #     return redirect(request, "game/newProfile.html", data=data)        
+    # else:
+    #     initial = {
+
+    #     }
+    #     form = NewProfileForm(initial=initial)
+    # data = {'form': form, 'questions':''}
+    # return render(request, 'game/newProfile.html', data)
         
 
 @login_required
@@ -109,15 +210,108 @@ def show(request, id):
     return render(request, 'articles/management/show.html', data)
 
 def game(request, game):
+    # 1st check if there an game in the side_n  attached to the user.profile
+    # generate game with that one and update with the request
+    # update session game
+    # if not:
+    #   2nd check if there invitation attached to session
+    #   generate invitation with that one and update with the request
+    #   update session invitation
+    #   if not: 
+    #       generate a totally new invitation with the request
+    #       update session invitation
 
     return render(request, 'game/new.html')
-def invitation(request, game):
 
-    return render(request, 'game/new.html')
+@login_required
+def invitation(request):
+    # 1st check if there an invitation attached to the user
+    # generate invitation with that one and update with the request
+    # update session invitation
+    # if not:
+    #   2nd check if there invitation attached to session
+    #   generate invitation with that one and update with the request
+    #   update session invitation
+    #   if not: 
+    #       generate a totally new invitation with the request
+    #       update session invitation
+    if request.method == 'POST':
+        if hasattr(request.user, 'profile'):
+            obj = request.user.profile.invitation
+            invitationInstance = get_object_or_404(Invitation, pk=obj.id)
+            invitation = NewInvitationForm(data=request.POST, instance=invitationInstance)
+        else:
+            if "user_invitation" in request.session:
+                obj = request.session["user_invitation"]
+                invitationInstance = get_object_or_404(Invitation, pk=obj)
+                invitation = NewInvitationForm(data=request.POST, instance=invitationInstance)
+            else:
+                invitation = NewInvitationForm(data=request.POST)
+        if invitation.is_valid():
+            id=invitation.save()
+            request.session["user_invitation"] = id.id
+            return redirect('home')
+        else:
+            form = invitation
+            data = {
+                'form': form
+            }
+            return render(request, 'game/newInvitation.html', data)
+    else:
+        form = NewInvitationForm()
+        data = {
+            'form': form
+        }
+        return render(request, 'game/newInvitation.html', data)
     
 def update_character(request, game):
-
-    return render(request, 'game/new.html')
+    # 1st check if there is a character attached to the game object_n
+    # generate character with that ones and update with the request
+    # update session character side_n
+    # if not:
+    #   2nd check if there are character attached to session
+    #   generate character with that one and update with the request
+    #   update session character side_n
+    #   if not: 
+    #       generate a totally new character with the request
+    #       update session character side_n
+    if request.method == 'POST':
+        if(game == 1):
+            if "user_side1" in request.session:
+                game = get_object_or_404(Game, pk=request.session["user_side1"])
+                user_character = game.character.id
+            elif "user_side1_character" in request.session:
+                user_character = request.session["user_side1_character"]
+            else:   
+                user_character=None
+        else:
+            if "user_side2" in request.session:
+                game = get_object_or_404(Game, pk=request.session["user_side2"])
+                user_character = game.character.id
+            elif "user_side2_character" in request.session:
+                user_character = request.session["user_side2_character"]
+            else:   
+                user_character=None
+        if user_character:
+            instance = get_object_or_404(Character, pk=user_character)
+            character = CharacterSerializer(instance, data=request.POST)
+        else:  character = CharacterSerializer(data=request.POST) #needs change maybe forms?
+        if character.is_valid():
+            id = character.save()
+            if(game == 1):
+                request.session["user_side1_character"] = id.id
+            else: request.session["user_side2_character"] = id.id
+            return redirect('game-form', game=game)
+        else:
+            data = {
+                'character': character #needs change maybe forms?
+            }
+            return render(request, 'game/newCharacter.html', data)
+    else:        
+        data = {
+            'character': '0'
+        }
+        return render(request, 'game/newCharacter.html', data)
 
 def not_found_404(request, exception):
     data = { 'err': exception }

@@ -1,18 +1,19 @@
 {% extends "game/base.html"%}
 {% block content %}
     <form method='post'>
+        {% csrf_token %}
         {% if side1 %}
             {% comment %} // show game character {% endcomment %}
-            <a href="{% url 'game-form' game=1 %}">Create the configuration number 1 </a>
+            <a href="{% url 'game-form' gamenumber=1 %}">Update the configuration number 1 </a>
         {% else%}
-            <a href="{% url 'game-form' game=1 %}">Create the configuration number 1 </a>
+            <a href="{% url 'game-form' gamenumber=1 %}">Create the configuration number 1 </a>
         {% endif %}
 
         {% if side2 %}
             {% comment %} // show game character {% endcomment %}
-            <a href="{% url 'game-form' game=2 %}">Update the configuration number 1 </a>
+            <a href="{% url 'game-form' gamenumber=2 %}">Update the configuration number 1 </a>
         {% else%}
-            <a href="{% url 'game-form' game=2 %}">Create the configuration number 1 </a>
+            <a href="{% url 'game-form' gamenumber=2 %}">Create the configuration number 1 </a>
         {% endif %}
 
         {% if invitation %}
@@ -23,12 +24,17 @@
             <a href="{% url 'invitation-form' %}">Create the formal invitation</a>
         {% endif %}
 
-        {% if side1 and side2 and invitation %}
-            <input type='text' name='wedding_url'>
-            <button type='submit' id='questionmaker'> Obtain my link </button>
+       
+        {% if side1 and side2 and invitation%}
+            {{form}}
+            <button type='submit' id='profilemaker'> Obtain my link </button>
         {% endif %}
+        {% if wedding_url and side1 and side2 and invitation%}
+            <a href="{{netlify_url}}/{{wedding_url}}">{{wedding_url}}</a>
+        {% endif %}
+        
     </form>
-    <script>
+    {% comment %} <script>
         form = document.querySelector('form')
         form.addEventListener('submit',validateSubmission)
 
@@ -36,7 +42,7 @@
             e.preventDefault()
         }
 
-    </script>
+    </script> {% endcomment %}
 
 
 
