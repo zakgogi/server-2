@@ -1,23 +1,10 @@
 from django.db import models
-from django.core.validators import MinLengthValidator
 from django.utils import timezone
-from django.db.models.fields import CharField
 from django.contrib.postgres.fields import ArrayField
 
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
-from pathlib import Path
-import json
-
-script_location = Path(__file__).absolute().parent
-file_location = script_location / 'static/game/character_map.json'
-file_location2 = script_location / 'static/game/questions.json'
-
-with file_location.open() as json_file:
-    characterData = json.load(json_file)
-   
+ 
 def character_list_tuple(data):
     lista = []
     for value in data:
@@ -41,10 +28,10 @@ class Question(models.Model):
 
 class Character(models.Model):
     name = models.CharField(max_length=100)
-    hair_id = models.IntegerField(choices=character_list_tuple(characterData['hair']))
-    skin_id = models.IntegerField(choices=character_list_tuple(characterData['skin']))
-    dress_id = models.IntegerField(choices=character_list_tuple(characterData['dress']))
-    eyes_id = models.IntegerField(choices=character_list_tuple(characterData['eyes']))
+    hair_id = models.IntegerField()
+    skin_id = models.IntegerField()
+    dress_id = models.IntegerField()
+    eyes_id = models.IntegerField()
     
     class Meta:
         verbose_name_plural = "characters"
@@ -67,7 +54,7 @@ class Game(models.Model):
     date =  models.DateField(default=timezone.now)
     questions = models.ManyToManyField(Question, blank=True)
     character = models.ForeignKey(Character, on_delete=models.SET_NULL, null=True)
-    scores = models.ManyToManyField(Score, blank=True)
+    scores = models.ManyToManyField(Score,blank=True)
 
     class Meta:
         verbose_name_plural = "games"

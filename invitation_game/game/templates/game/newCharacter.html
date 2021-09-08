@@ -1,0 +1,67 @@
+{% extends "game/base.html"%}
+{% block content %} 
+{% load static %}
+    <form method='post'>
+        {% csrf_token %}
+        <div id='body1'>
+            {% for part in character.bodytype_1 %}
+                <div id='{{part}}'>
+                    <p>{{part}}</p>
+                    {% for value in character.bodytype_1.H%}
+                        <p>key,value:{{value.id}}</p>
+                        {% with firstpart=value.id|stringformat:"s"|add:".png" %}
+                        {% with secondpart=part|add:firstpart %}
+                        {% with url="game/character_sprites/"|add:secondpart%}
+                        <p>p{{seconpart}}{{firstpart}}</p>
+                        <img src="{% static url %}" alt={{value.title}} onClick='updateinput("{{part}}","{{value.id}}")'>
+                        {%endwith%}
+                        {%endwith%}
+                        {%endwith%}
+                    {%endfor%}
+                </div>
+            {%endfor%}
+        </div>
+        <div id='body2'>
+            {% for part2 in character.bodytype_2 %}
+                <div id='{{part2}}'>
+                    <p>{{part2}}</p>
+                    {% for value in character.bodytype_2.H%}
+                        <p>key,value:{{value.id}}</p>
+                        {% with firstpart=value.id|stringformat:"s"|add:".png" %}
+                        {% with secondpart=part2|add:firstpart %}
+                        {% with url="game/character_sprites/"|add:secondpart%}
+                        <p>p{{seconpart}}{{firstpart}}</p>
+                        <img src="{% static url %}" alt={{value.title}} onClick='updateinput("{{part2}}","{{value.id}}")'>
+                        {%endwith%}
+                        {%endwith%}
+                        {%endwith%}
+                    {%endfor%}
+                </div>
+            {%endfor%}
+        </div>
+        {{ form }}
+            <button type='submit' id='gamemaker'>Submit</button>
+    </form>
+    <script>
+        function updateinput(inputname, id){
+            switch(inputname){
+                case 'H':
+                    inputid='hair_id';
+                    break;
+                case 'E':
+                    inputid='eyes_id';
+                    break;
+                case 'D':
+                    inputid='dress_id';
+                    break;
+                case 'S':
+                    inputid='skin_id';
+                    break;
+            }
+            a = document.querySelector('input[name="'+inputid+'"]')
+            a.value = parseInt(id)
+        }
+
+    </script>
+
+{% endblock content %}

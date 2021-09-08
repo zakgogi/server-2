@@ -19,6 +19,12 @@ class NewCharacterForm(forms.ModelForm):
     class Meta:
         model = Character
         fields = '__all__'
+        widgets = {
+            'hair_id': forms.HiddenInput(),
+            'eyes_id': forms.HiddenInput(),
+            'skin_id': forms.HiddenInput(),
+            'dress_id': forms.HiddenInput()
+        }
 
 class NewProfileForm(forms.ModelForm):
     class Meta:
