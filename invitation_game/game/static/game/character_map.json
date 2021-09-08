@@ -1,43 +1,131 @@
 {
-    "hair":[
-        {
-            "id":1,
-            "title":"Short ginger"
-        },
-        {
-            "id":2,
-            "title":"Short brunete"
-        }
-    ],
-    "dress":[
-        {
-            "id":1,
-            "title":"Short ginger"
-        },
-        {
-            "id":2,
-            "title":"Short brunete"
-        }
-    ],
-    "eyes":[
-        {
-            "id":1,
-            "title":"Short ginger"
-        },
-        {
-            "id":2,
-            "title":"Short brunete"
-        }
-    ],
-    "skin":[
-        {
-            "id":1,
-            "title":"Short ginger"
-        },
-        {
-            "id":2,
-            "title":"Short brunete"
-        }
-    ]
-    
+    "bodytype_1":{
+        "hair":[
+            {
+                "id":1,
+                "title":"Short blonde"
+            },
+            {
+                "id":2,
+                "title":"Short black"
+            },
+            {
+                "id":3,
+                "title":"Short brunete"
+            }
+        ],
+        "skin":[
+            {
+                "id":1,
+                "title":"Light tone"
+            },
+            {
+                "id":2,
+                "title":"Dark tone"
+            },
+            {
+                "id":3,
+                "title":"Olive tone"
+            }
+        ],
+        "dress":[
+            {
+                "id":1,
+                "title":"Dress version 1"
+            },
+            {
+                "id":2,
+                "title":"Dress version 2"
+            },
+            {
+                "id":3,
+                "title":"Fitted white suit"
+            },
+            {
+                "id":4,
+                "title":"Fitted black suit"
+            },
+            {
+                "id":5,
+                "title":"Relaxed white suit"
+            },
+            {
+                "id":6,
+                "title":"Relaxed black suit"
+            }
+        ],
+        "eyes":[
+            {
+                "id":1,
+                "title":"Green"
+            },
+            {
+                "id":2,
+                "title":"Brown"
+            },
+            {
+                "id":3,
+                "title":"Blue"
+            }
+        ]
+    },
+    "bodytype_2":{
+        "hair":[
+            {
+                "id":4,
+                "title":"Short cut blonde"
+            },
+            {
+                "id":5,
+                "title":"Short cut black"
+            },
+            {
+                "id":6,
+                "title":"Short cut brunete"
+            }
+        ],
+        "skin":[
+            {
+                "id":4,
+                "title":"Light tone"
+            },
+            {
+                "id":5,
+                "title":"Dark tone"
+            },
+            {
+                "id":6,
+                "title":"Olive tone"
+            }
+        ],
+        "dress":[
+            {
+                "id":5,
+                "title":"Relaxed white suit"
+            },
+            {
+                "id":6,
+                "title":"Relaxed black suit"
+            },
+            {
+                "id":7,
+                "title":"Dress version 3"
+            }
+        ],
+        "eyes":[
+            {
+                "id":4,
+                "title":"Upper green"
+            },
+            {
+                "id":5,
+                "title":"Upper brown"
+            },
+            {
+                "id":6,
+                "title":"Upper blue"
+            }
+        ]
+    }
+
 }
