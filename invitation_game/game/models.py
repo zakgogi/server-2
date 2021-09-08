@@ -54,7 +54,7 @@ class Game(models.Model):
     date =  models.DateField(default=timezone.now)
     questions = models.ManyToManyField(Question, blank=True)
     character = models.ForeignKey(Character, on_delete=models.SET_NULL, null=True)
-    scores = models.ManyToManyField(Score, blank=True)
+    scores = models.ManyToManyField(Score,blank=True)
 
     class Meta:
         verbose_name_plural = "games"

@@ -50,7 +50,6 @@ def update_questions(request, gamenumber=1, name='user'):
     
     if request.method == 'POST':
         if(gamenumber == 1):
-            print(request.session["user_side1"])
             if "user_side1" in request.session:
                 game = get_object_or_404(Game, pk=request.session["user_side1"])
                 user_questions = []
@@ -244,7 +243,7 @@ def gamedatagetter(request, side):
     }
     return data
 
-
+@login_required
 def game(request, gamenumber):
     # 1st check if there an game in the side_n  attached to the user.profile
     # generate game with that one and update with the request
@@ -261,24 +260,48 @@ def game(request, gamenumber):
             if hasattr(request.user, 'profile') and request.user.profile.side1 :
                 obj = request.user.profile.side1
                 gameInstance = get_object_or_404(Game, pk=obj.id)
-                game = NewGameForm(data=request.POST, instance=gameInstance)
+                data={
+                    'character':int(request.POST['character']),
+                    'questions':request.POST['questions'].split(',')
+                }
+                game = NewGameForm(data=data, instance=gameInstance)
             elif "user_side1" in request.session:
                 obj = request.session["user_side1"]
-                gameInstance = get_object_or_404(Game, pk=obj)
-                game = NewGameForm(data=request.POST, instance=gameInstance)
+                gameInstance = get_object_or_404(Game, pk=obj)     
+                data={
+                    'character':int(request.POST['character']),
+                    'questions':request.POST['questions'].split(',')
+                }                
+                game = NewGameForm(data=data, instance=gameInstance)
             else:
-                game = NewGameForm(data=request.POST)
+                data={
+                    'character':int(request.POST['character']),
+                    'questions':request.POST['questions'].split(',')
+                }    
+                game = NewGameForm(data=data)
         elif gamenumber==2:
             if hasattr(request.user, 'profile') and request.user.profile.side2 :
                 obj = request.user.profile.side2
                 gameInstance = get_object_or_404(Game, pk=obj.id)
-                game = NewGameForm(data=request.POST, instance=gameInstance)
+                data={
+                    'character':int(request.POST['character']),
+                    'questions':request.POST['questions'].split(',')
+                }
+                game = NewGameForm(data=data, instance=gameInstance)
             elif "user_side2" in request.session:
                 obj = request.session["user_side2"]
                 gameInstance = get_object_or_404(Game, pk=obj)
-                game = NewGameForm(data=request.POST, instance=gameInstance)
+                data={
+                    'character':int(request.POST['character']),
+                    'questions':request.POST['questions'].split(',')
+                }
+                game = NewGameForm(data=data, instance=gameInstance)
             else:
-                game = NewGameForm(data=request.POST)
+                data={
+                    'character':int(request.POST['character']),
+                    'questions':request.POST['questions'].split(',')
+                }    
+                game = NewGameForm(data=data)
         if game.is_valid():
             id = game.save()
             gamedatasetter(request,id.id, gamenumber)
@@ -376,17 +399,18 @@ def update_character(request, gamenumber):
                 user_character=None
         if user_character:
             instance = get_object_or_404(Character, pk=user_character)
-            character = NewCharacterForm(instance, data=request.POST)
+            character = NewCharacterForm(instance=instance, data=request.POST)
         else:  character = NewCharacterForm(data=request.POST) #needs change maybe forms?
         if character.is_valid():
             id = character.save()
-            if(game == 1):
+            if(gamenumber == 1):
                 request.session["user_side1_character"] = id.id
             else: request.session["user_side2_character"] = id.id
-            return redirect('game-form', game=game)
+            return redirect('game-form', gamenumber=gamenumber)
         else:
             data = {
-                'character': character #needs change maybe forms?
+                'character': characterData, #needs change maybe forms?
+                'form': character
             }
             
             return render(request, 'game/newCharacter.html', data)
