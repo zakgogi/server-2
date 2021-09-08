@@ -30,7 +30,7 @@ user_wedding_url=None
 
 
 @login_required
-def update_questions(request, game = 1):
+def update_questions(request, game = 1, name='user'):
     # 1st check if there questioons are attached to the game object_n
     # generate questions with that ones and update with the request
     # update session question
@@ -92,7 +92,7 @@ def update_questions(request, game = 1):
         return redirect( "game-form", game=game)
 
     else:
-        context = {"questions": questionData['questions']}
+        context = {"questions": questionData['questions'], 'name':name}
         return render(request, "game/chooseQuestions.html", context)
 
 def datageter(request):

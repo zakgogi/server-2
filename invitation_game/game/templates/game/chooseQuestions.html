@@ -35,6 +35,18 @@
     </form>
 
     <script>
+    function updateQuestions(){
+        a = document.querySelectorAll('input[type="text"]')
+        b = document.querySelectorAll('label') 
+        for(let question of a){
+            question.value = question.value.replaceAll('{username}',"{{name}}")
+        }
+        for(let label of b){
+            label.textContent = label.textContent.replaceAll('{username}',"{{name}}")
+        }
+    }
+    updateQuestions();
+
     dothething();
     function mirror(number){   
         selected = document.getElementById('correct-answer-'+number)
