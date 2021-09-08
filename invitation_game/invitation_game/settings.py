@@ -153,7 +153,7 @@ LOGIN_URL = 'login'
 # Activate Django-Heroku.
 django_heroku.settings(locals())
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_ALLOW_ALL = False
 
 # CORS_ORIGIN_WHITELIST = (
