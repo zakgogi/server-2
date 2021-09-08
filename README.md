@@ -99,10 +99,10 @@
 <details>
   <summary><b>INVITATION</b></sumary>
 
-| Name | Type | Notes |
-|------|------|-------|
-| id | SERIAL | Primary key |
-| title | varchar(300) | Not null |
-| message | varchar(500) | Not null |
+  | Name | Type | Notes |
+  |------|------|-------|
+  | id | SERIAL | Primary key |
+  | title | varchar(300) | Not null |
+  | message | varchar(500) | Not null |
 
 </details>
