@@ -49,7 +49,7 @@
                 "Turn into a pickle"
             ]
         },{
-            "question":"If food does {username} like the most?",
+            "question":"Which food does {username} like the most?",
             "options":[
                 "Sushi",
                 "Steak & Chips",
