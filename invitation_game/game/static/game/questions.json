@@ -49,12 +49,12 @@
                 "Turn into a pickle"
             ]
         },{
-            "question":"If {username} had a superpower, what would they choose?",
+            "question":"If food does {username} like the most?",
             "options":[
-                "Invisibility",
-                "Mind Reading",
-                "Fly",
-                "Turn into a pickle"
+                "Sushi",
+                "Steak & Chips",
+                "Vegetables",
+                "Fried Chicken"
             ]
         },{
             "question":"What is {username}'s priority in life?",
