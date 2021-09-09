@@ -1,7 +1,7 @@
 {
     "questions":[
         {
-            "question":"If {username} meets a genie, what would be {username}'s wish?",
+            "question":"If {username} met a genie, what would be {username}'s wish?",
             "options":[
                 "A billion pounds",
                 "Beautiful wife/husband",
