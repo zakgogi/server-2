@@ -17,12 +17,68 @@
                 "Wine"
             ]
         },{
-            "question":"Which animal does {username} dream to pet?",
+            "question":"Which animal does {username} prefer?",
             "options":[
                 "A dog",
                 "A cat",
                 "A horse",
                 "A duck"
+            ]
+        },{
+            "question":"If {username} won the lottery, what would they buy first?",
+            "options":[
+                "A mansion",
+                "A sports car",
+                "Just put it all in savings..",
+                "A trip around the world"
+            ]
+        },{
+            "question":"What is {username}'s preferred music genre?",
+            "options":[
+                "Jazz",
+                "Rock",
+                "Pop",
+                "R&B Hip Hop"
+            ]
+        },{
+            "question":"If {username} had a superpower, what would they choose?",
+            "options":[
+                "Invisibility",
+                "Mind Reading",
+                "Ability to fly",
+                "Turn into a pickle"
+            ]
+        },{
+            "question":"If {username} had a superpower, what would they choose?",
+            "options":[
+                "Invisibility",
+                "Mind Reading",
+                "Fly",
+                "Turn into a pickle"
+            ]
+        },{
+            "question":"What is {username}'s priority in life?",
+            "options":[
+                "Happiness",
+                "Love",
+                "Money",
+                "Family"
+            ]
+        },{
+            "question":"What would be {username}'s preferred dream job?",
+            "options":[
+                "Hollywood Actor",
+                "Successful Music Artist",
+                "CEO of a company",
+                "Bartender at a beach shack"
+            ]
+        },{
+            "question":"How many kids would {username} want?",
+            "options":[
+                "No kids please...",
+                "1",
+                "2",
+                "The more the merrier!"
             ]
         }
     ]
